@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Dreamer Collective | Idea Tools</title>
+  <meta name="description" content="Creative prompt sparks and random generators for Dreamers.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <div class="starfield" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <nav class="nav container" aria-label="Main navigation">
+      <a class="brand" href="index.html">✦ The Dreamer Collective</a>
+      <button class="menu-toggle" aria-expanded="false" aria-controls="nav-links">Menu</button>
+      <ul id="nav-links" class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a class="active" href="tools.html">Idea Tools</a></li>
+        <li><a href="dreamers.html">The Dreamers</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main-content" class="container section" aria-labelledby="tools-title">
+    <h1 id="tools-title">Idea Tools</h1>
+    <p class="section-intro">Use these small generators as starting points for AI image ideas. They are not meant to create perfect universal prompts. Treat them as sparks you can adapt to your own tool, style, and theme.</p>
+
+    <section class="tool-grid" aria-label="Creative idea generators">
+      <article class="tool-card" data-tool="theme">
+        <h2>Random Theme Generator</h2>
+        <p>Generate a simple creative theme to build an image around.</p>
+        <div class="button-row">
+          <button class="button button-primary generate-btn" data-action="theme">Generate spark</button>
+          <button class="button button-secondary copy-btn" data-copy-target="theme-output">Copy spark</button>
+        </div>
+        <pre id="theme-output" class="result-card" aria-live="polite">Tap “Generate spark” to begin.</pre>
+      </article>
+
+      <article class="tool-card" data-tool="prompt-spark">
+        <h2>Random Prompt Spark Generator</h2>
+        <p>Generate a structured idea spark with theme, mood, setting, key detail, and style direction.</p>
+        <div class="button-row">
+          <button class="button button-primary generate-btn" data-action="prompt">Try another</button>
+          <button class="button button-secondary copy-btn" data-copy-target="prompt-output">Steal this spark</button>
+        </div>
+        <pre id="prompt-output" class="result-card" aria-live="polite">Theme:
+Mood:
+Setting:
+Key visual detail:
+Style direction:</pre>
+      </article>
+
+      <article class="tool-card" data-tool="palette">
+        <h2>Random Color Palette Generator</h2>
+        <p>Generate a color mood for an image concept.</p>
+        <div class="button-row">
+          <button class="button button-primary generate-btn" data-action="palette">Generate spark</button>
+          <button class="button button-secondary copy-btn" data-copy-target="palette-output">Copy spark</button>
+        </div>
+        <div id="palette-swatches" class="swatch-row" aria-label="Generated palette swatches"></div>
+        <pre id="palette-output" class="result-card" aria-live="polite">Palette:
+Colors:</pre>
+      </article>
+
+      <article class="tool-card" data-tool="style-mix">
+        <h2>Random Style Mix Generator</h2>
+        <p>Generate a mix of visual styles or concepts to combine.</p>
+        <div class="button-row">
+          <button class="button button-primary generate-btn" data-action="style">Generate spark</button>
+          <button class="button button-secondary copy-btn" data-copy-target="style-output">Copy spark</button>
+        </div>
+        <pre id="style-output" class="result-card" aria-live="polite">Style mix:
+Possible direction:</pre>
+      </article>
+
+      <article class="tool-card" data-tool="collab">
+        <h2>Random Collaboration Theme Generator</h2>
+        <p>Generate a theme idea that could work for a group collab.</p>
+        <div class="button-row">
+          <button class="button button-primary generate-btn" data-action="collab">Try another</button>
+          <button class="button button-secondary copy-btn" data-copy-target="collab-output">Copy spark</button>
+        </div>
+        <pre id="collab-output" class="result-card" aria-live="polite">Collab theme:
+Shared rule:
+Optional twist:</pre>
+      </article>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>The Dreamer Collective — a hobby space for individual AI image creators.</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
