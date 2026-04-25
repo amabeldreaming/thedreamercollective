@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Dreamer Collective | The Dreamers</title>
+  <meta name="description" content="A simple creator directory for the Dreamer Collective.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <div class="starfield" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <nav class="nav container" aria-label="Main navigation">
+      <a class="brand" href="index.html">✦ The Dreamer Collective</a>
+      <button class="menu-toggle" aria-expanded="false" aria-controls="nav-links">Menu</button>
+      <ul id="nav-links" class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="tools.html">Idea Tools</a></li>
+        <li><a class="active" href="dreamers.html">The Dreamers</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main-content" class="container section" aria-labelledby="dreamers-title">
+    <h1 id="dreamers-title">The Dreamers</h1>
+    <p class="section-intro">The Dreamer Collective is made of individual creators. This page is a simple place to find the Dreamers and their personal Instagram pages.</p>
+
+    <section class="card card-wide filter-bar" aria-label="Search dreamers">
+      <label for="dreamer-search">Search by name, handle, tag, or vibe</label>
+      <input id="dreamer-search" type="search" placeholder="Try: fantasy, portrait, @handle" autocomplete="off">
+      <p id="dreamer-count" class="muted">Loading Dreamers...</p>
+    </section>
+
+    <section>
+      <div id="dreamers-grid" class="grid cards-3" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>The Dreamer Collective — a hobby space for individual AI image creators.</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
