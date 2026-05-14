@@ -441,23 +441,20 @@ const paletteRoles = [
   {
     key: "base",
     label: "base color",
-    saturationShift: 8,
-    lightnessShift: -18,
-    hueShift: -10
+    saturation: [22, 82],
+    lightness: [12, 54]
   },
   {
     key: "support",
     label: "soft/support color",
-    saturationShift: -18,
-    lightnessShift: 18,
-    hueShift: 18
+    saturation: [8, 62],
+    lightness: [58, 92]
   },
   {
     key: "accent",
     label: "accent color",
-    saturationShift: 14,
-    lightnessShift: 2,
-    hueShift: 132
+    saturation: [52, 100],
+    lightness: [36, 78]
   }
 ];
 
@@ -490,45 +487,19 @@ const ingredientColorInfluences = {
   Celestial: { hues: [[214, 246], [270, 306]], saturation: [46, 88], lightness: [42, 76] }
 };
 
-const cssNamedColors = [
-  { name: "AliceBlue", hex: "#F0F8FF" }, { name: "AntiqueWhite", hex: "#FAEBD7" }, { name: "Aqua", hex: "#00FFFF" }, { name: "Aquamarine", hex: "#7FFFD4" },
-  { name: "Azure", hex: "#F0FFFF" }, { name: "Beige", hex: "#F5F5DC" }, { name: "Bisque", hex: "#FFE4C4" }, { name: "Black", hex: "#000000" },
-  { name: "BlanchedAlmond", hex: "#FFEBCD" }, { name: "Blue", hex: "#0000FF" }, { name: "BlueViolet", hex: "#8A2BE2" }, { name: "Brown", hex: "#A52A2A" },
-  { name: "BurlyWood", hex: "#DEB887" }, { name: "CadetBlue", hex: "#5F9EA0" }, { name: "Chartreuse", hex: "#7FFF00" }, { name: "Chocolate", hex: "#D2691E" },
-  { name: "Coral", hex: "#FF7F50" }, { name: "CornflowerBlue", hex: "#6495ED" }, { name: "Cornsilk", hex: "#FFF8DC" }, { name: "Crimson", hex: "#DC143C" },
-  { name: "Cyan", hex: "#00FFFF" }, { name: "DarkBlue", hex: "#00008B" }, { name: "DarkCyan", hex: "#008B8B" }, { name: "DarkGoldenrod", hex: "#B8860B" },
-  { name: "DarkGray", hex: "#A9A9A9" }, { name: "DarkGreen", hex: "#006400" }, { name: "DarkGrey", hex: "#A9A9A9" }, { name: "DarkKhaki", hex: "#BDB76B" },
-  { name: "DarkMagenta", hex: "#8B008B" }, { name: "DarkOliveGreen", hex: "#556B2F" }, { name: "DarkOrange", hex: "#FF8C00" }, { name: "DarkOrchid", hex: "#9932CC" },
-  { name: "DarkRed", hex: "#8B0000" }, { name: "DarkSalmon", hex: "#E9967A" }, { name: "DarkSeaGreen", hex: "#8FBC8F" }, { name: "DarkSlateBlue", hex: "#483D8B" },
-  { name: "DarkSlateGray", hex: "#2F4F4F" }, { name: "DarkSlateGrey", hex: "#2F4F4F" }, { name: "DarkTurquoise", hex: "#00CED1" }, { name: "DarkViolet", hex: "#9400D3" },
-  { name: "DeepPink", hex: "#FF1493" }, { name: "DeepSkyBlue", hex: "#00BFFF" }, { name: "DimGray", hex: "#696969" }, { name: "DimGrey", hex: "#696969" },
-  { name: "DodgerBlue", hex: "#1E90FF" }, { name: "FireBrick", hex: "#B22222" }, { name: "FloralWhite", hex: "#FFFAF0" }, { name: "ForestGreen", hex: "#228B22" },
-  { name: "Fuchsia", hex: "#FF00FF" }, { name: "Gainsboro", hex: "#DCDCDC" }, { name: "GhostWhite", hex: "#F8F8FF" }, { name: "Gold", hex: "#FFD700" },
-  { name: "Goldenrod", hex: "#DAA520" }, { name: "Gray", hex: "#808080" }, { name: "Green", hex: "#008000" }, { name: "GreenYellow", hex: "#ADFF2F" },
-  { name: "Grey", hex: "#808080" }, { name: "HoneyDew", hex: "#F0FFF0" }, { name: "HotPink", hex: "#FF69B4" }, { name: "IndianRed", hex: "#CD5C5C" },
-  { name: "Indigo", hex: "#4B0082" }, { name: "Ivory", hex: "#FFFFF0" }, { name: "Khaki", hex: "#F0E68C" }, { name: "Lavender", hex: "#E6E6FA" },
-  { name: "LavenderBlush", hex: "#FFF0F5" }, { name: "LawnGreen", hex: "#7CFC00" }, { name: "LemonChiffon", hex: "#FFFACD" }, { name: "LightBlue", hex: "#ADD8E6" },
-  { name: "LightCoral", hex: "#F08080" }, { name: "LightCyan", hex: "#E0FFFF" }, { name: "LightGoldenrodYellow", hex: "#FAFAD2" }, { name: "LightGray", hex: "#D3D3D3" },
-  { name: "LightGreen", hex: "#90EE90" }, { name: "LightGrey", hex: "#D3D3D3" }, { name: "LightPink", hex: "#FFB6C1" }, { name: "LightSalmon", hex: "#FFA07A" },
-  { name: "LightSeaGreen", hex: "#20B2AA" }, { name: "LightSkyBlue", hex: "#87CEFA" }, { name: "LightSlateGray", hex: "#778899" }, { name: "LightSlateGrey", hex: "#778899" },
-  { name: "LightSteelBlue", hex: "#B0C4DE" }, { name: "LightYellow", hex: "#FFFFE0" }, { name: "Lime", hex: "#00FF00" }, { name: "LimeGreen", hex: "#32CD32" },
-  { name: "Linen", hex: "#FAF0E6" }, { name: "Magenta", hex: "#FF00FF" }, { name: "Maroon", hex: "#800000" }, { name: "MediumAquamarine", hex: "#66CDAA" },
-  { name: "MediumBlue", hex: "#0000CD" }, { name: "MediumOrchid", hex: "#BA55D3" }, { name: "MediumPurple", hex: "#9370DB" }, { name: "MediumSeaGreen", hex: "#3CB371" },
-  { name: "MediumSlateBlue", hex: "#7B68EE" }, { name: "MediumSpringGreen", hex: "#00FA9A" }, { name: "MediumTurquoise", hex: "#48D1CC" }, { name: "MediumVioletRed", hex: "#C71585" },
-  { name: "MidnightBlue", hex: "#191970" }, { name: "MintCream", hex: "#F5FFFA" }, { name: "MistyRose", hex: "#FFE4E1" }, { name: "Moccasin", hex: "#FFE4B5" },
-  { name: "NavajoWhite", hex: "#FFDEAD" }, { name: "Navy", hex: "#000080" }, { name: "OldLace", hex: "#FDF5E6" }, { name: "Olive", hex: "#808000" },
-  { name: "OliveDrab", hex: "#6B8E23" }, { name: "Orange", hex: "#FFA500" }, { name: "OrangeRed", hex: "#FF4500" }, { name: "Orchid", hex: "#DA70D6" },
-  { name: "PaleGoldenrod", hex: "#EEE8AA" }, { name: "PaleGreen", hex: "#98FB98" }, { name: "PaleTurquoise", hex: "#AFEEEE" }, { name: "PaleVioletRed", hex: "#DB7093" },
-  { name: "PapayaWhip", hex: "#FFEFD5" }, { name: "PeachPuff", hex: "#FFDAB9" }, { name: "Peru", hex: "#CD853F" }, { name: "Pink", hex: "#FFC0CB" },
-  { name: "Plum", hex: "#DDA0DD" }, { name: "PowderBlue", hex: "#B0E0E6" }, { name: "Purple", hex: "#800080" }, { name: "RebeccaPurple", hex: "#663399" },
-  { name: "Red", hex: "#FF0000" }, { name: "RosyBrown", hex: "#BC8F8F" }, { name: "RoyalBlue", hex: "#4169E1" }, { name: "SaddleBrown", hex: "#8B4513" },
-  { name: "Salmon", hex: "#FA8072" }, { name: "SandyBrown", hex: "#F4A460" }, { name: "SeaGreen", hex: "#2E8B57" }, { name: "SeaShell", hex: "#FFF5EE" },
-  { name: "Sienna", hex: "#A0522D" }, { name: "Silver", hex: "#C0C0C0" }, { name: "SkyBlue", hex: "#87CEEB" }, { name: "SlateBlue", hex: "#6A5ACD" },
-  { name: "SlateGray", hex: "#708090" }, { name: "SlateGrey", hex: "#708090" }, { name: "Snow", hex: "#FFFAFA" }, { name: "SpringGreen", hex: "#00FF7F" },
-  { name: "SteelBlue", hex: "#4682B4" }, { name: "Tan", hex: "#D2B48C" }, { name: "Teal", hex: "#008080" }, { name: "Thistle", hex: "#D8BFD8" },
-  { name: "Tomato", hex: "#FF6347" }, { name: "Turquoise", hex: "#40E0D0" }, { name: "Violet", hex: "#EE82EE" }, { name: "Wheat", hex: "#F5DEB3" },
-  { name: "White", hex: "#FFFFFF" }, { name: "WhiteSmoke", hex: "#F5F5F5" }, { name: "Yellow", hex: "#FFFF00" }, { name: "YellowGreen", hex: "#9ACD32" }
-].map((color) => ({ ...color, rgb: hexToRgb(color.hex) }));
+const namedDreamColors = (window.dreamNamedColors || []).map((color) => {
+  const rgb = hexToRgb(color.hex);
+  return {
+    ...color,
+    hex: color.hex.toUpperCase(),
+    rgb,
+    hsl: rgbToHsl(rgb)
+  };
+});
+
+const recentDreamColorHexes = [];
+const recentDreamColorLimit = 18;
+
 
 function getDreamAudioContext() {
   if (!dreamBuilderState.soundEnabled) return null;
@@ -705,71 +676,76 @@ function normalizeHue(hue) {
   return ((hue % 360) + 360) % 360;
 }
 
-function pickHueFromRange([start, end]) {
-  if (start <= end) {
-    return randomBetween(start, end);
-  }
-
-  const span = 360 - start + end;
-  return normalizeHue(start + randomBetween(0, span));
-}
-
-function averageCircularHue(hues) {
-  const vectors = hues.reduce((sum, hue) => {
-    const radians = hue * Math.PI / 180;
-    return {
-      x: sum.x + Math.cos(radians),
-      y: sum.y + Math.sin(radians)
-    };
-  }, { x: 0, y: 0 });
-
-  return normalizeHue(Math.atan2(vectors.y, vectors.x) * 180 / Math.PI);
-}
-
-function getCombinedInfluence() {
-  const selectedInfluences = getSelectedDreamIngredients()
+function getSelectedInfluences() {
+  return getSelectedDreamIngredients()
     .map((ingredient) => ingredientColorInfluences[ingredient])
     .filter(Boolean);
-
-  if (!selectedInfluences.length) return null;
-
-  const sampledHues = selectedInfluences.map((influence) => pickHueFromRange(pickRandom(influence.hues)));
-  const saturationMidpoints = selectedInfluences.map((influence) => (influence.saturation[0] + influence.saturation[1]) / 2);
-  const lightnessMidpoints = selectedInfluences.map((influence) => (influence.lightness[0] + influence.lightness[1]) / 2);
-
-  return {
-    hue: averageCircularHue(sampledHues),
-    saturation: saturationMidpoints.reduce((sum, value) => sum + value, 0) / saturationMidpoints.length,
-    lightness: lightnessMidpoints.reduce((sum, value) => sum + value, 0) / lightnessMidpoints.length,
-    saturationMin: Math.min(...selectedInfluences.map((influence) => influence.saturation[0])),
-    saturationMax: Math.max(...selectedInfluences.map((influence) => influence.saturation[1])),
-    lightnessMin: Math.min(...selectedInfluences.map((influence) => influence.lightness[0])),
-    lightnessMax: Math.max(...selectedInfluences.map((influence) => influence.lightness[1]))
-  };
 }
 
-function hslToRgb({ hue, saturation, lightness }) {
-  const s = saturation / 100;
-  const l = lightness / 100;
-  const c = (1 - Math.abs(2 * l - 1)) * s;
-  const hPrime = normalizeHue(hue) / 60;
-  const x = c * (1 - Math.abs((hPrime % 2) - 1));
-  const m = l - c / 2;
-  let r = 0;
-  let g = 0;
-  let b = 0;
+function hueDistance(hueA, hueB) {
+  const distance = Math.abs(normalizeHue(hueA) - normalizeHue(hueB));
+  return Math.min(distance, 360 - distance);
+}
 
-  if (hPrime < 1) [r, g, b] = [c, x, 0];
-  else if (hPrime < 2) [r, g, b] = [x, c, 0];
-  else if (hPrime < 3) [r, g, b] = [0, c, x];
-  else if (hPrime < 4) [r, g, b] = [0, x, c];
-  else if (hPrime < 5) [r, g, b] = [x, 0, c];
-  else [r, g, b] = [c, 0, x];
+function hueDistanceToRange(hue, [start, end]) {
+  const normalizedHue = normalizeHue(hue);
+  const normalizedStart = normalizeHue(start);
+  const normalizedEnd = normalizeHue(end);
+  const isInsideRange = normalizedStart <= normalizedEnd
+    ? normalizedHue >= normalizedStart && normalizedHue <= normalizedEnd
+    : normalizedHue >= normalizedStart || normalizedHue <= normalizedEnd;
+
+  if (isInsideRange) return 0;
+  return Math.min(hueDistance(normalizedHue, normalizedStart), hueDistance(normalizedHue, normalizedEnd));
+}
+
+function rangeScore(value, [min, max], falloff = 35) {
+  if (value >= min && value <= max) return 1;
+  const distance = value < min ? min - value : value - max;
+  return clamp(1 - (distance / falloff), 0, 1);
+}
+
+function hueRangeScore(hue, ranges) {
+  const closestDistance = Math.min(...ranges.map((range) => hueDistanceToRange(hue, range)));
+  return clamp(1 - (closestDistance / 90), 0, 1);
+}
+
+function scoreColorForInfluence(color, influence) {
+  const hueScore = hueRangeScore(color.hsl.hue, influence.hues);
+  const saturationScore = rangeScore(color.hsl.saturation, influence.saturation, 38);
+  const lightnessScore = rangeScore(color.hsl.lightness, influence.lightness, 42);
+
+  return (hueScore * 0.56) + (saturationScore * 0.2) + (lightnessScore * 0.24);
+}
+
+function scoreColorForRole(color, role) {
+  const lightnessScore = rangeScore(color.hsl.lightness, role.lightness, 32);
+  const saturationScore = rangeScore(color.hsl.saturation, role.saturation, 34);
+  return (lightnessScore * 0.62) + (saturationScore * 0.38);
+}
+
+function rgbToHsl({ r, g, b }) {
+  const red = r / 255;
+  const green = g / 255;
+  const blue = b / 255;
+  const max = Math.max(red, green, blue);
+  const min = Math.min(red, green, blue);
+  const delta = max - min;
+  let hue = 0;
+
+  if (delta !== 0) {
+    if (max === red) hue = 60 * (((green - blue) / delta) % 6);
+    else if (max === green) hue = 60 * (((blue - red) / delta) + 2);
+    else hue = 60 * (((red - green) / delta) + 4);
+  }
+
+  const lightness = (max + min) / 2;
+  const saturation = delta === 0 ? 0 : delta / (1 - Math.abs((2 * lightness) - 1));
 
   return {
-    r: Math.round((r + m) * 255),
-    g: Math.round((g + m) * 255),
-    b: Math.round((b + m) * 255)
+    hue: normalizeHue(hue),
+    saturation: saturation * 100,
+    lightness: lightness * 100
   };
 }
 
@@ -782,22 +758,6 @@ function hexToRgb(hex) {
   };
 }
 
-function colorDistance(rgbA, rgbB) {
-  return Math.sqrt(
-    ((rgbA.r - rgbB.r) ** 2 * 0.3) +
-    ((rgbA.g - rgbB.g) ** 2 * 0.59) +
-    ((rgbA.b - rgbB.b) ** 2 * 0.11)
-  );
-}
-
-function nearestCssNamedColor(rgb, usedNames = new Set()) {
-  const rankedColors = [...cssNamedColors].sort((a, b) => colorDistance(rgb, a.rgb) - colorDistance(rgb, b.rgb));
-  return rankedColors.find((color) => !usedNames.has(color.name) && !usedNames.has(color.hex)) || rankedColors[0];
-}
-
-function formatCssColorName(name) {
-  return name.replace(/([a-z])([A-Z])/g, "$1 $2");
-}
 
 function readableTextColor(hex) {
   const { r, g, b } = hexToRgb(hex);
@@ -805,37 +765,73 @@ function readableTextColor(hex) {
   return luminance > 150 ? "#1D1230" : "#F8F0FF";
 }
 
-function generatePaletteColor(role, usedNames = new Set()) {
-  const influence = getCombinedInfluence();
-  if (!influence) return null;
+function rememberDreamColors(colors) {
+  colors.forEach((color) => {
+    if (!color?.hex) return;
+    recentDreamColorHexes.unshift(color.hex);
+  });
 
-  const hsl = {
-    hue: normalizeHue(influence.hue + role.hueShift + randomBetween(-16, 16)),
-    saturation: clamp(influence.saturation + role.saturationShift + randomBetween(-10, 10), influence.saturationMin, influence.saturationMax),
-    lightness: clamp(influence.lightness + role.lightnessShift + randomBetween(-8, 8), influence.lightnessMin, influence.lightnessMax)
-  };
-  const nearest = nearestCssNamedColor(hslToRgb(hsl), usedNames);
+  const uniqueRecentHexes = [...new Set(recentDreamColorHexes)];
+  recentDreamColorHexes.splice(0, recentDreamColorHexes.length, ...uniqueRecentHexes.slice(0, recentDreamColorLimit));
+}
+
+function scoreNamedColor(color, role, selectedInfluences) {
+  const ingredientScore = selectedInfluences.length
+    ? selectedInfluences.reduce((sum, influence) => sum + scoreColorForInfluence(color, influence), 0) / selectedInfluences.length
+    : 0.5;
+  const roleScore = scoreColorForRole(color, role);
+  const recentPenalty = recentDreamColorHexes.includes(color.hex) ? 0.18 : 0;
+
+  return (ingredientScore * 0.62) + (roleScore * 0.38) - recentPenalty;
+}
+
+function pickScoredColor(scoredColors) {
+  const topPool = scoredColors.slice(0, Math.min(44, scoredColors.length));
+  const weightedPool = topPool.map((entry, index) => ({
+    ...entry,
+    weight: Math.max(0.08, entry.score + ((topPool.length - index) / topPool.length * 0.22))
+  }));
+  const totalWeight = weightedPool.reduce((sum, entry) => sum + entry.weight, 0);
+  let cursor = Math.random() * totalWeight;
+
+  return weightedPool.find((entry) => {
+    cursor -= entry.weight;
+    return cursor <= 0;
+  })?.color || weightedPool[0]?.color;
+}
+
+function generatePaletteColor(role, usedHexes = new Set()) {
+  const selectedInfluences = getSelectedInfluences();
+  if (!selectedInfluences.length || !namedDreamColors.length) return null;
+
+  // The engine now chooses directly from real named-color dataset rows. It does
+  // not generate arbitrary HSL colors or snap them to a nearest CSS color name.
+  const scoredColors = namedDreamColors
+    .filter((color) => !usedHexes.has(color.hex))
+    .map((color) => ({ color, score: scoreNamedColor(color, role, selectedInfluences) + randomBetween(0, 0.08) }))
+    .sort((a, b) => b.score - a.score);
+  const selectedColor = pickScoredColor(scoredColors);
+  if (!selectedColor) return null;
 
   return {
     role: role.key,
     roleLabel: role.label,
-    name: nearest.name,
-    displayName: formatCssColorName(nearest.name),
-    hex: nearest.hex,
-    text: readableTextColor(nearest.hex)
+    name: selectedColor.name,
+    displayName: selectedColor.name,
+    hex: selectedColor.hex,
+    text: readableTextColor(selectedColor.hex)
   };
 }
 
+
 function generateDreamPalette() {
-  const usedNames = new Set();
+  const usedHexes = new Set();
   dreamBuilderState.palette = paletteRoles.map((role) => {
-    const color = generatePaletteColor(role, usedNames);
-    if (color) {
-      usedNames.add(color.name);
-      usedNames.add(color.hex);
-    }
+    const color = generatePaletteColor(role, usedHexes);
+    if (color) usedHexes.add(color.hex);
     return color;
   }).filter(Boolean);
+  rememberDreamColors(dreamBuilderState.palette);
 }
 
 function rerollDreamPalette() {
@@ -848,17 +844,17 @@ function rerollDreamPaletteColor(index) {
   const role = paletteRoles[index];
   if (!role || !hasDreamIngredient()) return;
 
-  const usedNames = new Set();
+  const usedHexes = new Set();
   dreamBuilderState.palette
     .filter((_, colorIndex) => colorIndex !== index)
     .forEach((color) => {
-      usedNames.add(color.name);
-      usedNames.add(color.hex);
+      usedHexes.add(color.hex);
     });
-  const color = generatePaletteColor(role, usedNames);
+  const color = generatePaletteColor(role, usedHexes);
   if (!color) return;
 
   dreamBuilderState.palette[index] = color;
+  rememberDreamColors([color]);
   renderDreamPalette();
   playDreamSound("colorReroll");
 }
