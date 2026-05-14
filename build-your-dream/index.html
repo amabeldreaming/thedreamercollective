@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Dreamer Collective | Build Your Dream</title>
-  <meta name="description" content="A placeholder for the upcoming Build Your Dream color palette mini game.">
+  <meta name="description" content="Build a dream from magical ingredients and reveal a placeholder 3-color palette.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -20,6 +20,7 @@
       <div class="nav-actions">
         <ul id="nav-links" class="nav-links">
           <li><a href="../index.html">Home</a></li>
+          <li><a class="active" href="../build-your-dream/">Build Your Dream</a></li>
           <li><a href="../tools.html">Idea Tools</a></li>
           <li><a href="../dreamers.html">The Dreamers</a></li>
         </ul>
@@ -29,15 +30,93 @@
     </nav>
   </header>
 
-  <main id="main-content" class="container placeholder-page" aria-labelledby="build-title">
-    <section class="card card-wide placeholder-card">
+  <main id="main-content" class="container build-dream-page" aria-labelledby="build-title">
+    <section class="build-dream-hero" aria-label="Build Your Dream introduction">
       <p class="eyebrow">Featured path</p>
       <h1 id="build-title">Build Your Dream</h1>
-      <p class="tagline">A color palette mini game is coming here.</p>
-      <p class="hero-text">This space will become a playful color-building experience for Dreamers. For now, it is a quiet placeholder while the mini game is being prepared.</p>
-      <div class="hero-actions">
-        <a class="button button-secondary" href="../index.html">Return Home</a>
-      </div>
+      <p class="tagline">Pick dream ingredients. Reveal a palette.</p>
+    </section>
+
+    <section class="dream-builder" aria-label="Dream ingredient picker">
+      <form id="dream-builder-form" class="ingredient-stack">
+        <fieldset class="ingredient-section" data-section="count">
+          <legend>To fall asleep I want to count…</legend>
+          <div class="ingredient-grid">
+            <button class="ingredient-card" type="button" data-section="count" data-ingredient="Sheep">Sheep</button>
+            <button class="ingredient-card" type="button" data-section="count" data-ingredient="Stars">Stars</button>
+            <button class="ingredient-card" type="button" data-section="count" data-ingredient="Moths">Moths</button>
+            <button class="ingredient-card" type="button" data-section="count" data-ingredient="Candles">Candles</button>
+            <button class="ingredient-card" type="button" data-section="count" data-ingredient="Keys">Keys</button>
+            <button class="ingredient-card" type="button" data-section="count" data-ingredient="Clouds">Clouds</button>
+            <button class="ingredient-card" type="button" data-section="count" data-ingredient="Tiny Ghosts">Tiny Ghosts</button>
+            <button class="ingredient-card" type="button" data-section="count" data-ingredient="Paper Cranes">Paper Cranes</button>
+          </div>
+        </fieldset>
+
+        <fieldset class="ingredient-section" data-section="spice">
+          <legend>I pick my good dream spice</legend>
+          <div class="ingredient-grid">
+            <button class="ingredient-card" type="button" data-section="spice" data-ingredient="Moon Sugar">Moon Sugar</button>
+            <button class="ingredient-card" type="button" data-section="spice" data-ingredient="Dragon Ash">Dragon Ash</button>
+            <button class="ingredient-card" type="button" data-section="spice" data-ingredient="Fairy Salt">Fairy Salt</button>
+            <button class="ingredient-card" type="button" data-section="spice" data-ingredient="Rose Dust">Rose Dust</button>
+            <button class="ingredient-card" type="button" data-section="spice" data-ingredient="Silver Honey">Silver Honey</button>
+            <button class="ingredient-card" type="button" data-section="spice" data-ingredient="Glowberries">Glowberries</button>
+            <button class="ingredient-card" type="button" data-section="spice" data-ingredient="Midnight Vanilla">Midnight Vanilla</button>
+            <button class="ingredient-card" type="button" data-section="spice" data-ingredient="Bottled Starlight">Bottled Starlight</button>
+          </div>
+        </fieldset>
+
+        <fieldset class="ingredient-section" data-section="vibe">
+          <legend>My dreams main vibe</legend>
+          <div class="ingredient-grid">
+            <button class="ingredient-card" type="button" data-section="vibe" data-ingredient="Cozy">Cozy</button>
+            <button class="ingredient-card" type="button" data-section="vibe" data-ingredient="Haunted">Haunted</button>
+            <button class="ingredient-card" type="button" data-section="vibe" data-ingredient="Royal">Royal</button>
+            <button class="ingredient-card" type="button" data-section="vibe" data-ingredient="Romantic">Romantic</button>
+            <button class="ingredient-card" type="button" data-section="vibe" data-ingredient="Stormy">Stormy</button>
+            <button class="ingredient-card" type="button" data-section="vibe" data-ingredient="Forest">Forest</button>
+            <button class="ingredient-card" type="button" data-section="vibe" data-ingredient="Candy">Candy</button>
+            <button class="ingredient-card" type="button" data-section="vibe" data-ingredient="Celestial">Celestial</button>
+          </div>
+        </fieldset>
+      </form>
+
+      <section id="dream-palette" class="dream-palette" aria-labelledby="palette-title" hidden>
+        <div class="palette-topline">
+          <div>
+            <p class="eyebrow">Placeholder palette</p>
+            <h2 id="palette-title">Your dream colors</h2>
+          </div>
+          <div class="palette-actions">
+            <button id="reroll-palette" class="button button-primary" type="button">Reroll palette</button>
+            <button id="clear-dream" class="button button-secondary" type="button">Clear dream</button>
+          </div>
+        </div>
+
+        <div id="selected-ingredients" class="selected-ingredients" aria-live="polite"></div>
+
+        <div class="palette-card-grid" aria-label="Generated placeholder palette">
+          <article class="palette-card" style="--palette-color: #2B1B5A; --palette-text: #F8F0FF;">
+            <button class="card-reroll" type="button" aria-label="Reroll Midnight Bloom">↻</button>
+            <span class="palette-chip" aria-hidden="true"></span>
+            <h3>Midnight Bloom</h3>
+            <p>#2B1B5A</p>
+          </article>
+          <article class="palette-card" style="--palette-color: #FF7AC8; --palette-text: #2A0D24;">
+            <button class="card-reroll" type="button" aria-label="Reroll Rose Spell">↻</button>
+            <span class="palette-chip" aria-hidden="true"></span>
+            <h3>Rose Spell</h3>
+            <p>#FF7AC8</p>
+          </article>
+          <article class="palette-card" style="--palette-color: #8AF6FF; --palette-text: #062E36;">
+            <button class="card-reroll" type="button" aria-label="Reroll Ghost Glow">↻</button>
+            <span class="palette-chip" aria-hidden="true"></span>
+            <h3>Ghost Glow</h3>
+            <p>#8AF6FF</p>
+          </article>
+        </div>
+      </section>
     </section>
   </main>
 

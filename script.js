@@ -426,6 +426,117 @@ function initializeDreamersPage() {
   });
 }
 
+
+const dreamBuilderState = {
+  count: null,
+  spice: null,
+  vibe: null
+};
+
+const placeholderPalettes = [
+  [
+    { name: "Midnight Bloom", hex: "#2B1B5A", text: "#F8F0FF" },
+    { name: "Rose Spell", hex: "#FF7AC8", text: "#2A0D24" },
+    { name: "Ghost Glow", hex: "#8AF6FF", text: "#062E36" }
+  ],
+  [
+    { name: "Velvet Moon", hex: "#21123F", text: "#F8F0FF" },
+    { name: "Candle Peach", hex: "#FFB38A", text: "#351304" },
+    { name: "Fairy Mist", hex: "#C6F6D5", text: "#10331F" }
+  ],
+  [
+    { name: "Cloud Ink", hex: "#182449", text: "#F6ECFF" },
+    { name: "Sugar Star", hex: "#FFE58A", text: "#3E2A00" },
+    { name: "Moth Violet", hex: "#B78CFF", text: "#1F1038" }
+  ]
+];
+
+let placeholderPaletteIndex = 0;
+
+function hasDreamIngredient() {
+  return Object.values(dreamBuilderState).some(Boolean);
+}
+
+function renderSelectedIngredients() {
+  const selectedWrap = document.getElementById("selected-ingredients");
+  if (!selectedWrap) return;
+
+  const selected = Object.values(dreamBuilderState).filter(Boolean);
+  selectedWrap.innerHTML = selected.map((ingredient) => `<span>${ingredient}</span>`).join("");
+}
+
+function renderDreamPalette() {
+  const paletteWrap = document.getElementById("dream-palette");
+  if (!paletteWrap) return;
+
+  paletteWrap.hidden = !hasDreamIngredient();
+  renderSelectedIngredients();
+
+  const cards = paletteWrap.querySelectorAll(".palette-card");
+  const palette = placeholderPalettes[placeholderPaletteIndex];
+
+  cards.forEach((card, index) => {
+    const color = palette[index];
+    card.style.setProperty("--palette-color", color.hex);
+    card.style.setProperty("--palette-text", color.text);
+    card.querySelector("h3").textContent = color.name;
+    card.querySelector("p").textContent = color.hex;
+    card.querySelector(".card-reroll").setAttribute("aria-label", `Reroll ${color.name}`);
+  });
+}
+
+function selectDreamIngredient(button) {
+  const section = button.dataset.section;
+  const ingredient = button.dataset.ingredient;
+  const isSelected = button.classList.contains("is-selected");
+
+  dreamBuilderState[section] = isSelected ? null : ingredient;
+
+  document.querySelectorAll(`.ingredient-card[data-section="${section}"]`).forEach((sectionButton) => {
+    const selected = sectionButton.dataset.ingredient === dreamBuilderState[section];
+    sectionButton.classList.toggle("is-selected", selected);
+    sectionButton.setAttribute("aria-pressed", String(selected));
+  });
+
+  renderDreamPalette();
+}
+
+function rerollPlaceholderPalette() {
+  placeholderPaletteIndex = (placeholderPaletteIndex + 1) % placeholderPalettes.length;
+  renderDreamPalette();
+}
+
+function clearDreamBuilder() {
+  Object.keys(dreamBuilderState).forEach((key) => {
+    dreamBuilderState[key] = null;
+  });
+
+  document.querySelectorAll(".ingredient-card").forEach((button) => {
+    button.classList.remove("is-selected");
+    button.setAttribute("aria-pressed", "false");
+  });
+
+  renderDreamPalette();
+}
+
+function initializeDreamBuilder() {
+  const builder = document.getElementById("dream-builder-form");
+  if (!builder) return;
+
+  document.querySelectorAll(".ingredient-card").forEach((button) => {
+    button.setAttribute("aria-pressed", "false");
+    button.addEventListener("click", () => selectDreamIngredient(button));
+  });
+
+  document.getElementById("reroll-palette")?.addEventListener("click", rerollPlaceholderPalette);
+  document.querySelectorAll(".card-reroll").forEach((button) => {
+    button.addEventListener("click", rerollPlaceholderPalette);
+  });
+  document.getElementById("clear-dream")?.addEventListener("click", clearDreamBuilder);
+
+  renderDreamPalette();
+}
+
 function initializeMobileNav() {
   const menuButton = document.querySelector(".menu-toggle");
   const navLinks = document.getElementById("nav-links");
@@ -456,6 +567,8 @@ function initializePage() {
   if (document.getElementById("dreamers-grid")) {
     initializeDreamersPage();
   }
+
+  initializeDreamBuilder();
 }
 
 document.addEventListener("DOMContentLoaded", initializePage);
