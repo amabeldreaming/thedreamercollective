@@ -517,10 +517,40 @@ input[type="search"] {
 }
 
 .build-dream-hero {
+  display: grid;
+  justify-items: center;
+  gap: 0.5rem;
   margin-inline: auto;
   max-width: 760px;
   padding-bottom: 1rem;
   text-align: center;
+}
+
+.sound-toggle {
+  border: 1px solid rgba(255, 229, 138, 0.44);
+  border-radius: var(--radius-pill);
+  background: rgba(255, 229, 138, 0.1);
+  color: var(--text-bright);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 800;
+  padding: 0.42rem 0.85rem;
+  touch-action: manipulation;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.sound-toggle:hover,
+.sound-toggle:focus-visible {
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 16px rgba(255, 229, 138, 0.16);
+  transform: translateY(-1px);
+}
+
+.sound-toggle[aria-pressed="false"] {
+  border-color: rgba(170, 196, 255, 0.28);
+  background: var(--button-secondary-bg);
+  color: var(--text-muted);
 }
 
 .dream-builder {
@@ -575,6 +605,7 @@ input[type="search"] {
 }
 
 .ingredient-card {
+  position: relative;
   min-height: 3.35rem;
   border: 1px solid rgba(170, 196, 255, 0.28);
   border-radius: 0.95rem;
@@ -599,14 +630,31 @@ input[type="search"] {
 .ingredient-card:active { transform: translateY(1px) scale(0.98); }
 
 .ingredient-card.is-selected {
-  border-color: rgba(255, 229, 138, 0.88);
-  background: linear-gradient(135deg, rgba(255, 92, 207, 0.34), rgba(53, 231, 255, 0.2)), var(--surface-strong);
-  box-shadow: 0 0 0 1px rgba(255, 229, 138, 0.25), 0 0 24px rgba(255, 92, 207, 0.28), 0 0 34px rgba(53, 231, 255, 0.18);
+  border-color: rgba(255, 229, 138, 0.95);
+  background: linear-gradient(135deg, rgba(255, 92, 207, 0.38), rgba(53, 231, 255, 0.24)), var(--surface-strong);
+  box-shadow: 0 0 0 1px rgba(255, 229, 138, 0.34), 0 0 22px rgba(255, 229, 138, 0.22), 0 0 30px rgba(255, 92, 207, 0.34), 0 0 42px rgba(53, 231, 255, 0.24);
   color: var(--text-bright);
   animation: selected-shimmer 2.8s ease-in-out infinite;
 }
 
+.ingredient-card.is-tapped { animation: ingredient-tap 0.28s ease; }
+
+.ingredient-sparkle {
+  position: absolute;
+  left: var(--spark-x);
+  top: var(--spark-y);
+  width: 0.42rem;
+  height: 0.42rem;
+  border-radius: 50%;
+  background: var(--accent-gold);
+  box-shadow: 0 0 12px rgba(255, 229, 138, 0.85);
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0);
+  animation: ingredient-sparkle 0.72s ease-out forwards;
+}
+
 .dream-palette {
+  position: relative;
   display: grid;
   gap: 0.9rem;
   padding: 1rem;
@@ -614,6 +662,19 @@ input[type="search"] {
   border-radius: calc(var(--radius) + 0.35rem);
   background: linear-gradient(160deg, rgba(255, 92, 207, 0.14), rgba(53, 231, 255, 0.08)), var(--card-bg);
   box-shadow: var(--glow-strong);
+}
+
+.dream-palette.is-revealing { animation: palette-reveal 0.7s ease both; }
+
+.dream-palette.is-revealing::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(110deg, transparent 18%, rgba(255, 255, 255, 0.28), transparent 58%);
+  pointer-events: none;
+  transform: translateX(-120%);
+  animation: palette-shine 0.72s ease both;
 }
 
 .dream-palette[hidden] { display: none; }
@@ -667,6 +728,53 @@ input[type="search"] {
   padding: 1rem;
   box-shadow: inset 0 -60px 70px rgba(0, 0, 0, 0.16), 0 12px 30px rgba(0, 0, 0, 0.18);
 }
+
+.palette-copy {
+  position: relative;
+  z-index: 1;
+  width: fit-content;
+  max-width: calc(100% - 3rem);
+  border: 0;
+  border-radius: 0.42rem;
+  background: transparent;
+  color: currentColor;
+  cursor: pointer;
+  font: inherit;
+  margin: 0;
+  padding: 0.08rem 0.18rem;
+  text-align: left;
+  touch-action: manipulation;
+}
+
+.palette-copy:hover,
+.palette-copy:focus-visible {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.palette-copy-name {
+  font-family: "Inter", sans-serif;
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.palette-copy-hex {
+  font-size: 0.9rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.copy-status {
+  justify-self: start;
+  min-height: 1.2rem;
+  margin: 0;
+  color: var(--text-bright);
+  font-size: 0.84rem;
+  font-weight: 800;
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+
+.copy-status.is-visible { opacity: 1; }
 
 .palette-card h3,
 .palette-card p {
@@ -722,6 +830,27 @@ input[type="search"] {
 @keyframes selected-shimmer {
   0%, 100% { filter: brightness(1); }
   50% { filter: brightness(1.16); }
+}
+
+@keyframes ingredient-tap {
+  0% { transform: scale(1); }
+  45% { transform: scale(0.96); }
+  100% { transform: scale(1); }
+}
+
+@keyframes ingredient-sparkle {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+  32% { opacity: 1; }
+  100% { opacity: 0; transform: translate(calc(-50% + var(--spark-dx)), calc(-50% + var(--spark-dy))) scale(1); }
+}
+
+@keyframes palette-reveal {
+  from { opacity: 0; transform: translateY(0.55rem) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes palette-shine {
+  to { transform: translateX(120%); }
 }
 
 @media (min-width: 620px) {
