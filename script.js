@@ -1,3 +1,56 @@
+const THEME_STORAGE_KEY = "dreamer-theme";
+const THEME_LABELS = {
+  daydream: "Daydream",
+  nightdream: "Nightdream"
+};
+
+function getSavedTheme() {
+  let savedTheme = null;
+
+  try {
+    savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+  } catch {
+    savedTheme = null;
+  }
+
+  return savedTheme === "daydream" || savedTheme === "nightdream" ? savedTheme : "nightdream";
+}
+
+function saveTheme(theme) {
+  try {
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
+  } catch {
+    return;
+  }
+}
+
+function applyTheme(theme) {
+  document.documentElement.dataset.theme = theme;
+
+  const toggle = document.querySelector(".theme-toggle");
+  if (!toggle) return;
+
+  const nextTheme = theme === "daydream" ? "nightdream" : "daydream";
+  toggle.textContent = THEME_LABELS[theme];
+  toggle.setAttribute("aria-label", `Switch to ${THEME_LABELS[nextTheme]} theme`);
+  toggle.setAttribute("aria-pressed", String(theme === "daydream"));
+}
+
+function initializeThemeToggle() {
+  const toggle = document.querySelector(".theme-toggle");
+  if (!toggle) return;
+
+  applyTheme(getSavedTheme());
+
+  toggle.addEventListener("click", () => {
+    const currentTheme = document.documentElement.dataset.theme === "daydream" ? "daydream" : "nightdream";
+    const nextTheme = currentTheme === "daydream" ? "nightdream" : "daydream";
+
+    saveTheme(nextTheme);
+    applyTheme(nextTheme);
+  });
+}
+
 const themeData = {
   themes: [
     "Moonlit greenhouse", "Neon fairy market", "Forgotten sky temple", "Haunted bakery", "Celestial library",
@@ -393,6 +446,7 @@ function initializeMobileNav() {
 }
 
 function initializePage() {
+  initializeThemeToggle();
   initializeMobileNav();
 
   if (document.querySelector(".tool-grid")) {
