@@ -35,6 +35,7 @@
       <p class="eyebrow">Featured path</p>
       <h1 id="build-title">Build Your Dream</h1>
       <p class="tagline">Pick dream ingredients. Reveal a palette.</p>
+      <button id="sound-toggle" class="sound-toggle" type="button" aria-pressed="true">Sound on</button>
     </section>
 
     <section class="dream-builder" aria-label="Dream ingredient picker">
@@ -100,22 +101,23 @@
           <article class="palette-card" style="--palette-color: #191970; --palette-text: #F8F0FF;">
             <button class="card-reroll" type="button" aria-label="Reroll base color">↻</button>
             <span class="palette-chip" aria-hidden="true"></span>
-            <h3>Midnight Blue</h3>
-            <p>#191970</p>
+            <button class="palette-copy palette-copy-name" type="button" data-copy-kind="name">Midnight Blue</button>
+            <button class="palette-copy palette-copy-hex" type="button" data-copy-kind="hex">#191970</button>
           </article>
           <article class="palette-card" style="--palette-color: #FFE4E1; --palette-text: #2A0D24;">
             <button class="card-reroll" type="button" aria-label="Reroll soft/support color">↻</button>
             <span class="palette-chip" aria-hidden="true"></span>
-            <h3>Misty Rose</h3>
-            <p>#FFE4E1</p>
+            <button class="palette-copy palette-copy-name" type="button" data-copy-kind="name">Misty Rose</button>
+            <button class="palette-copy palette-copy-hex" type="button" data-copy-kind="hex">#FFE4E1</button>
           </article>
           <article class="palette-card" style="--palette-color: #9370DB; --palette-text: #140A2A;">
             <button class="card-reroll" type="button" aria-label="Reroll accent color">↻</button>
             <span class="palette-chip" aria-hidden="true"></span>
-            <h3>Medium Purple</h3>
-            <p>#9370DB</p>
+            <button class="palette-copy palette-copy-name" type="button" data-copy-kind="name">Medium Purple</button>
+            <button class="palette-copy palette-copy-hex" type="button" data-copy-kind="hex">#9370DB</button>
           </article>
         </div>
+        <p id="copy-status" class="copy-status" role="status" aria-live="polite"></p>
       </section>
     </section>
   </main>

@@ -431,7 +431,10 @@ const dreamBuilderState = {
   count: null,
   spice: null,
   vibe: null,
-  palette: []
+  palette: [],
+  hasRevealedPalette: false,
+  soundEnabled: true,
+  audioContext: null
 };
 
 const paletteRoles = [
@@ -526,6 +529,161 @@ const cssNamedColors = [
   { name: "Tomato", hex: "#FF6347" }, { name: "Turquoise", hex: "#40E0D0" }, { name: "Violet", hex: "#EE82EE" }, { name: "Wheat", hex: "#F5DEB3" },
   { name: "White", hex: "#FFFFFF" }, { name: "WhiteSmoke", hex: "#F5F5F5" }, { name: "Yellow", hex: "#FFFF00" }, { name: "YellowGreen", hex: "#9ACD32" }
 ].map((color) => ({ ...color, rgb: hexToRgb(color.hex) }));
+
+function getDreamAudioContext() {
+  if (!dreamBuilderState.soundEnabled) return null;
+
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContextClass) return null;
+
+  if (!dreamBuilderState.audioContext) {
+    dreamBuilderState.audioContext = new AudioContextClass();
+  }
+
+  if (dreamBuilderState.audioContext.state === "suspended") {
+    dreamBuilderState.audioContext.resume();
+  }
+
+  return dreamBuilderState.audioContext;
+}
+
+function playTone(context, { frequency, start = 0, duration = 0.08, type = "sine", gain = 0.05 }) {
+  const oscillator = context.createOscillator();
+  const gainNode = context.createGain();
+  const startAt = context.currentTime + start;
+  const endAt = startAt + duration;
+
+  oscillator.type = type;
+  oscillator.frequency.setValueAtTime(frequency, startAt);
+  gainNode.gain.setValueAtTime(0.0001, startAt);
+  gainNode.gain.exponentialRampToValueAtTime(gain, startAt + 0.015);
+  gainNode.gain.exponentialRampToValueAtTime(0.0001, endAt);
+
+  oscillator.connect(gainNode);
+  gainNode.connect(context.destination);
+  oscillator.start(startAt);
+  oscillator.stop(endAt + 0.02);
+}
+
+function playDreamSound(soundName) {
+  const context = getDreamAudioContext();
+  if (!context) return;
+
+  const sounds = {
+    ingredient: [
+      { frequency: 660, duration: 0.045, type: "triangle", gain: 0.025 },
+      { frequency: 990, start: 0.035, duration: 0.07, type: "sine", gain: 0.018 }
+    ],
+    firstReveal: [
+      { frequency: 523.25, duration: 0.13, type: "sine", gain: 0.026 },
+      { frequency: 783.99, start: 0.08, duration: 0.16, type: "triangle", gain: 0.03 },
+      { frequency: 1174.66, start: 0.17, duration: 0.2, type: "sine", gain: 0.022 }
+    ],
+    update: [
+      { frequency: 587.33, duration: 0.11, type: "sine", gain: 0.015 },
+      { frequency: 880, start: 0.08, duration: 0.15, type: "triangle", gain: 0.017 }
+    ],
+    colorReroll: [
+      { frequency: 740, duration: 0.055, type: "triangle", gain: 0.03 },
+      { frequency: 440, start: 0.045, duration: 0.075, type: "sine", gain: 0.02 }
+    ],
+    paletteReroll: [
+      { frequency: 493.88, duration: 0.1, type: "sine", gain: 0.022 },
+      { frequency: 739.99, start: 0.07, duration: 0.14, type: "triangle", gain: 0.026 },
+      { frequency: 987.77, start: 0.15, duration: 0.18, type: "sine", gain: 0.02 }
+    ]
+  };
+
+  sounds[soundName]?.forEach((tone) => playTone(context, tone));
+}
+
+function setSoundEnabled(enabled) {
+  dreamBuilderState.soundEnabled = enabled;
+  const soundToggle = document.getElementById("sound-toggle");
+  if (soundToggle) {
+    soundToggle.textContent = enabled ? "Sound on" : "Sound off";
+    soundToggle.setAttribute("aria-pressed", String(enabled));
+  }
+}
+
+function createIngredientSparkles(button) {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  const sparkleCount = 5;
+  for (let index = 0; index < sparkleCount; index += 1) {
+    const sparkle = document.createElement("span");
+    sparkle.className = "ingredient-sparkle";
+    sparkle.style.setProperty("--spark-x", `${38 + Math.random() * 24}%`);
+    sparkle.style.setProperty("--spark-y", `${34 + Math.random() * 30}%`);
+    sparkle.style.setProperty("--spark-dx", `${(Math.random() - 0.5) * 54}px`);
+    sparkle.style.setProperty("--spark-dy", `${-18 - Math.random() * 30}px`);
+    button.appendChild(sparkle);
+    sparkle.addEventListener("animationend", () => sparkle.remove(), { once: true });
+  }
+}
+
+function restartClassAnimation(element, className) {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  element.classList.remove(className);
+  void element.offsetWidth;
+  element.classList.add(className);
+  element.addEventListener("animationend", () => element.classList.remove(className), { once: true });
+}
+
+async function copyTextToClipboard(text) {
+  if (navigator.clipboard?.writeText) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch (error) {
+      // Fall through to the textarea copy path for older/insecure browsers.
+    }
+  }
+
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.setAttribute("readonly", "");
+  textarea.style.position = "fixed";
+  textarea.style.top = "-1000px";
+  document.body.appendChild(textarea);
+  textarea.select();
+
+  let copied = false;
+  try {
+    copied = document.execCommand("copy");
+  } finally {
+    textarea.remove();
+  }
+
+  if (!copied) throw new Error("Clipboard copy failed");
+  return copied;
+}
+
+function showCopyStatus(message) {
+  const status = document.getElementById("copy-status");
+  if (!status) return;
+
+  window.clearTimeout(status.dataset.timeoutId);
+  status.textContent = message;
+  status.classList.add("is-visible");
+  const timeoutId = window.setTimeout(() => {
+    status.classList.remove("is-visible");
+  }, 1300);
+  status.dataset.timeoutId = String(timeoutId);
+}
+
+async function copyPaletteValue(button) {
+  const value = button.textContent.trim();
+  const copyKind = button.dataset.copyKind;
+
+  try {
+    await copyTextToClipboard(value);
+    showCopyStatus(copyKind === "hex" ? "HEX copied" : "Copied");
+  } catch (error) {
+    showCopyStatus("Copy failed");
+  }
+}
 
 function hasDreamIngredient() {
   return Object.values(dreamBuilderState).some((value) => typeof value === "string" && value.length > 0);
@@ -682,7 +840,8 @@ function generateDreamPalette() {
 
 function rerollDreamPalette() {
   generateDreamPalette();
-  renderDreamPalette();
+  renderDreamPalette({ reveal: true });
+  playDreamSound("paletteReroll");
 }
 
 function rerollDreamPaletteColor(index) {
@@ -701,6 +860,7 @@ function rerollDreamPaletteColor(index) {
 
   dreamBuilderState.palette[index] = color;
   renderDreamPalette();
+  playDreamSound("colorReroll");
 }
 
 function renderSelectedIngredients() {
@@ -715,14 +875,15 @@ function renderSelectedIngredients() {
   });
 }
 
-function renderDreamPalette() {
+function renderDreamPalette(options = {}) {
   const paletteWrap = document.getElementById("dream-palette");
   if (!paletteWrap) return;
 
-  paletteWrap.hidden = !hasDreamIngredient();
+  const shouldShowPalette = hasDreamIngredient();
+  paletteWrap.hidden = !shouldShowPalette;
   renderSelectedIngredients();
 
-  if (!hasDreamIngredient()) return;
+  if (!shouldShowPalette) return;
   if (dreamBuilderState.palette.length !== paletteRoles.length) {
     generateDreamPalette();
   }
@@ -734,16 +895,26 @@ function renderDreamPalette() {
 
     card.style.setProperty("--palette-color", color.hex);
     card.style.setProperty("--palette-text", color.text);
-    card.querySelector("h3").textContent = color.displayName;
-    card.querySelector("p").textContent = color.hex;
+    card.querySelector(".palette-copy-name").textContent = color.displayName;
+    card.querySelector(".palette-copy-name").setAttribute("aria-label", `Copy color name ${color.displayName}`);
+    card.querySelector(".palette-copy-hex").textContent = color.hex;
+    card.querySelector(".palette-copy-hex").setAttribute("aria-label", `Copy HEX code ${color.hex}`);
     card.querySelector(".card-reroll").setAttribute("aria-label", `Reroll ${color.roleLabel}: ${color.displayName}`);
   });
+
+  if (options.reveal) {
+    restartClassAnimation(paletteWrap, "is-revealing");
+  }
 }
 
 function selectDreamIngredient(button) {
   const section = button.dataset.section;
   const ingredient = button.dataset.ingredient;
   const isSelected = button.classList.contains("is-selected");
+  const hadIngredient = hasDreamIngredient();
+
+  restartClassAnimation(button, "is-tapped");
+  playDreamSound("ingredient");
 
   dreamBuilderState[section] = isSelected ? null : ingredient;
   dreamBuilderState.palette = [];
@@ -754,11 +925,28 @@ function selectDreamIngredient(button) {
     sectionButton.setAttribute("aria-pressed", String(selected));
   });
 
-  renderDreamPalette();
+  if (!isSelected) createIngredientSparkles(button);
+
+  const hasIngredientNow = hasDreamIngredient();
+  const isFirstReveal = hasIngredientNow && !dreamBuilderState.hasRevealedPalette;
+  renderDreamPalette({ reveal: isFirstReveal || (hadIngredient && hasIngredientNow) });
+
+  if (isFirstReveal) {
+    dreamBuilderState.hasRevealedPalette = true;
+    playDreamSound("firstReveal");
+  } else if (hadIngredient && hasIngredientNow) {
+    playDreamSound("update");
+  }
 }
 
 function clearDreamBuilder() {
   Object.keys(dreamBuilderState).forEach((key) => {
+    if (key === "soundEnabled") return;
+    if (key === "audioContext") return;
+    if (key === "hasRevealedPalette") {
+      dreamBuilderState[key] = false;
+      return;
+    }
     dreamBuilderState[key] = Array.isArray(dreamBuilderState[key]) ? [] : null;
   });
 
@@ -783,7 +971,15 @@ function initializeDreamBuilder() {
   document.querySelectorAll(".card-reroll").forEach((button, index) => {
     button.addEventListener("click", () => rerollDreamPaletteColor(index));
   });
+  document.querySelectorAll(".palette-copy").forEach((button) => {
+    button.addEventListener("click", () => copyPaletteValue(button));
+  });
+  document.getElementById("sound-toggle")?.addEventListener("click", () => {
+    setSoundEnabled(!dreamBuilderState.soundEnabled);
+  });
   document.getElementById("clear-dream")?.addEventListener("click", clearDreamBuilder);
+
+  setSoundEnabled(dreamBuilderState.soundEnabled);
 
   renderDreamPalette();
 }
