@@ -487,18 +487,30 @@ const ingredientColorInfluences = {
   Celestial: { hues: [[214, 246], [270, 306]], saturation: [46, 88], lightness: [42, 76] }
 };
 
-const namedDreamColors = (window.dreamNamedColors || []).map((color) => {
-  const rgb = hexToRgb(color.hex);
-  return {
-    ...color,
-    hex: color.hex.toUpperCase(),
-    rgb,
-    hsl: rgbToHsl(rgb)
-  };
-});
+const invalidDreamColorNamePattern = /\d|\b(?:shit|poop|puke|vomit|snot|booger|diarrhea|piss|barf|nasty|ugly)\b/i;
+const validDreamHexPattern = /^#[0-9A-F]{6}$/i;
+const namedDreamColorKeys = new Set();
+const namedDreamColors = (window.dreamNamedColors || [])
+  .filter((color) => color?.name && validDreamHexPattern.test(color.hex || ""))
+  .map((color) => ({ ...color, hex: color.hex.toUpperCase() }))
+  .filter((color) => !invalidDreamColorNamePattern.test(color.name))
+  .filter((color) => {
+    const key = `${color.name.toLowerCase()}|${color.hex}`;
+    if (namedDreamColorKeys.has(key)) return false;
+    namedDreamColorKeys.add(key);
+    return true;
+  })
+  .map((color) => {
+    const rgb = hexToRgb(color.hex);
+    return {
+      ...color,
+      rgb,
+      hsl: rgbToHsl(rgb)
+    };
+  });
 
 const recentDreamColorHexes = [];
-const recentDreamColorLimit = 18;
+const recentDreamColorLimit = 30;
 
 
 function getDreamAudioContext() {
@@ -780,16 +792,38 @@ function scoreNamedColor(color, role, selectedInfluences) {
     ? selectedInfluences.reduce((sum, influence) => sum + scoreColorForInfluence(color, influence), 0) / selectedInfluences.length
     : 0.5;
   const roleScore = scoreColorForRole(color, role);
-  const recentPenalty = recentDreamColorHexes.includes(color.hex) ? 0.18 : 0;
+  const recentPenalty = recentDreamColorHexes.includes(color.hex) ? 0.34 : 0;
 
   return (ingredientScore * 0.62) + (roleScore * 0.38) - recentPenalty;
 }
 
+function colorDistance(colorA, colorB) {
+  if (!colorA?.rgb || !colorB?.rgb) return Number.POSITIVE_INFINITY;
+
+  return Math.hypot(
+    colorA.rgb.r - colorB.rgb.r,
+    colorA.rgb.g - colorB.rgb.g,
+    colorA.rgb.b - colorB.rgb.b
+  );
+}
+
+function keepVisiblyDifferentColors(colors, usedColors, minimumDistance = 54) {
+  if (!usedColors.length) return colors;
+
+  const variedColors = colors.filter((color) => usedColors.every((usedColor) => colorDistance(color, usedColor) >= minimumDistance));
+  return variedColors.length >= 12 ? variedColors : colors;
+}
+
+function avoidRecentColors(colors) {
+  const freshColors = colors.filter((color) => !recentDreamColorHexes.includes(color.hex));
+  return freshColors.length >= 18 ? freshColors : colors;
+}
+
 function pickScoredColor(scoredColors) {
-  const topPool = scoredColors.slice(0, Math.min(44, scoredColors.length));
+  const topPool = scoredColors.slice(0, Math.min(90, scoredColors.length));
   const weightedPool = topPool.map((entry, index) => ({
     ...entry,
-    weight: Math.max(0.08, entry.score + ((topPool.length - index) / topPool.length * 0.22))
+    weight: Math.max(0.08, entry.score + ((topPool.length - index) / topPool.length * 0.18))
   }));
   const totalWeight = weightedPool.reduce((sum, entry) => sum + entry.weight, 0);
   let cursor = Math.random() * totalWeight;
@@ -800,15 +834,18 @@ function pickScoredColor(scoredColors) {
   })?.color || weightedPool[0]?.color;
 }
 
-function generatePaletteColor(role, usedHexes = new Set()) {
+function generatePaletteColor(role, usedHexes = new Set(), usedNames = new Set(), usedColors = []) {
   const selectedInfluences = getSelectedInfluences();
   if (!selectedInfluences.length || !namedDreamColors.length) return null;
 
-  // The engine now chooses directly from real named-color dataset rows. It does
-  // not generate arbitrary HSL colors or snap them to a nearest CSS color name.
-  const scoredColors = namedDreamColors
-    .filter((color) => !usedHexes.has(color.hex))
-    .map((color) => ({ color, score: scoreNamedColor(color, role, selectedInfluences) + randomBetween(0, 0.08) }))
+  // The engine chooses directly from real named-color dataset rows. It does not
+  // generate arbitrary HSL colors or snap them to a nearest CSS color name.
+  const eligibleColors = avoidRecentColors(keepVisiblyDifferentColors(
+    namedDreamColors.filter((color) => !usedHexes.has(color.hex) && !usedNames.has(color.name.toLowerCase())),
+    usedColors
+  ));
+  const scoredColors = eligibleColors
+    .map((color) => ({ color, score: scoreNamedColor(color, role, selectedInfluences) + randomBetween(0, 0.16) }))
     .sort((a, b) => b.score - a.score);
   const selectedColor = pickScoredColor(scoredColors);
   if (!selectedColor) return null;
@@ -826,9 +863,15 @@ function generatePaletteColor(role, usedHexes = new Set()) {
 
 function generateDreamPalette() {
   const usedHexes = new Set();
+  const usedNames = new Set();
+  const usedColors = [];
   dreamBuilderState.palette = paletteRoles.map((role) => {
-    const color = generatePaletteColor(role, usedHexes);
-    if (color) usedHexes.add(color.hex);
+    const color = generatePaletteColor(role, usedHexes, usedNames, usedColors);
+    if (color) {
+      usedHexes.add(color.hex);
+      usedNames.add(color.displayName.toLowerCase());
+      usedColors.push(color);
+    }
     return color;
   }).filter(Boolean);
   rememberDreamColors(dreamBuilderState.palette);
@@ -845,12 +888,16 @@ function rerollDreamPaletteColor(index) {
   if (!role || !hasDreamIngredient()) return;
 
   const usedHexes = new Set();
+  const usedNames = new Set();
+  const usedColors = [];
   dreamBuilderState.palette
     .filter((_, colorIndex) => colorIndex !== index)
     .forEach((color) => {
       usedHexes.add(color.hex);
+      usedNames.add(color.displayName.toLowerCase());
+      usedColors.push(color);
     });
-  const color = generatePaletteColor(role, usedHexes);
+  const color = generatePaletteColor(role, usedHexes, usedNames, usedColors);
   if (!color) return;
 
   dreamBuilderState.palette[index] = color;
